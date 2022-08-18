@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: waldur-rt-sync
+spec:
+  selector:
+    matchLabels:
+      app: waldur-rt-sync
+  template:
+    metadata:
+      labels:
+        app: waldur-rt-sync
+    spec:
+      containers:
+        - name: waldur-rt-sync
+          image: registry.hpc.ut.ee/mirror/opennode/waldur-rt-sync:latest
+          imagePullPolicy: Always
+          env:
+            - name: REQUEST_TRACKER_URL
+              value: http://rt.com
+            - name: REQUEST_TRACKER_QUEUE
+              value: helpdesk
+            - name: REQUEST_TRACKER_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: waldur-rt-sync-secret
+                  key: REQUEST_TRACKER_TOKEN
+            - name: WALDUR_API_URL
+              value: http://waldur.com/api
+            - name: WALDUR_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: waldur-rt-sync-secret
+                  key: WALDUR_API_TOKEN
+            - name: ISSUE_TYPE
+              value: Incident
+            - name: ISSUE_USER_URL
+              value: http://waldur.com/api/users/<UUID>/
+            - name: ISSUE_ID_PREFIX
+              value: RT_ID
+            - name: ISSUE_URL_TEMPLATE
+              value: http://waldur.com/issues/{uuid}
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
