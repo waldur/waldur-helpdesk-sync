@@ -38,8 +38,6 @@ spec:
               value: http://waldur.com/api/users/<UUID>/
             - name: ISSUE_ID_PREFIX
               value: RT_ID
-            - name: ISSUE_URL_TEMPLATE
-              value: http://waldur.com/issues/{uuid}
           resources:
             limits:
               memory: "256Mi"

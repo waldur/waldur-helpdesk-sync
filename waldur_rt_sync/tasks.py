@@ -15,13 +15,12 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-WALDUR_API_URL = os.environ["WALDUR_API_URL"]
+WALDUR_API_URL =  os.environ["WALDUR_API_URL"]
 WALDUR_API_TOKEN = os.environ["WALDUR_API_TOKEN"]
 
 ISSUE_USER_URL = os.environ["ISSUE_USER_URL"]
-ISSUE_TYPE = os.environ["ISSUE_TYPE"]
+ISSUE_TYPE = os.environ.get("ISSUE_TYPE", "Incident")
 ISSUE_ID_PREFIX = os.environ.get("ISSUE_ID_PREFIX", "RT_ID")
-ISSUE_URL_TEMPLATE = os.environ["ISSUE_URL_TEMPLATE"]
 
 REQUEST_TRACKER_IMPORTED_STATUS = os.environ.get("REQUEST_TRACKER_IMPORTED_STATUS", 'open')
 
@@ -44,12 +43,13 @@ def pull_issues():
             comments = backend.get_comments(issue_id)
             description = '<br>'.join(
                 [
-                    'creator: %s; created: %s; content: %s;' % (comment.creator, comment.created, comment.content)
+                    '%s wrote on %s:\n%s\n\n' % (comment.creator, comment.created, clean_html(comment.content))
                     for comment in comments
                 ]
             )
+            description = f'{issue["_url"]}\n\n' + description
             response = client.create_support_issue(
-                issue.get('Subject'),
+                issue.get('Subject') or 'New issue',
                 ISSUE_TYPE,
                 ISSUE_USER_URL,
                 '%s:%s' % (ISSUE_ID_PREFIX, issue_id),
@@ -58,7 +58,7 @@ def pull_issues():
 
             backend.add_comment(
                 issue_id,
-                'Task have been created. URL: ' + ISSUE_URL_TEMPLATE.format(uuid=response.get('uuid'))
+                f'Task has been mirrored. ID of the created task is {response.get("key")}.'
             )
             backend.edit_issue(issue_id, Status=REQUEST_TRACKER_IMPORTED_STATUS)
         except Exception as e:

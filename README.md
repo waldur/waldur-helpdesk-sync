@@ -16,4 +16,3 @@ WALDUR_API_TOKEN - token for access. see http://your_waldur.domen/profile/manage
 ISSUE_USER_URL - user to be used to create an issue
 ISSUE_TYPE -  issue type to be used to create an issue
 ISSUE_ID_PREFIX - prefix for ticket id what will be saved in Waldur. It can be needed if you use several waldur_rt_sync instances. Default: 'RT_ID'
-ISSUE_URL_TEMPLATE - template of Waldur issue url. It must include 'uuid'

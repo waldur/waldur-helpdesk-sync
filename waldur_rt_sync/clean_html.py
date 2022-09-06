@@ -1,32 +1,6 @@
 import bleach
 
-ALLOWED_TAGS = [
-    "a",
-    "b",
-    "blockquote",
-    "code",
-    "em",
-    "i",
-    "li",
-    "ol",
-    "strong",
-    "ul",
-    "p",
-    "span",
-    "u",
-    "s",
-    "h1",
-    "h2",
-    "h3",
-    "h4",
-    "h5",
-    "h6",
-    "sub",
-    "sup",
-    "pre",
-    "br",
-]
-
+ALLOWED_TAGS = []
 
 ALLOWED_ATTRIBUTES = {
     "a": ["href"],
