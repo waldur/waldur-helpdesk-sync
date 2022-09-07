@@ -16,4 +16,4 @@ if __name__ == "__main__":
     while True:
         logger.info('Looking for new tasks in RT...')
         pull_issues()
-        sleep(float(60 * 10))
+        sleep(float(60 * 5))
