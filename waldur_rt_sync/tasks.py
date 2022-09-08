@@ -43,7 +43,7 @@ def pull_issues():
             comments = backend.get_comments(issue_id)
             description = '<br>'.join(
                 [
-                    '%s wrote on %s:\n%s\n\n' % (comment.creator, comment.created, clean_html(comment.content))
+                    '%s wrote on %s:\n%s\n\n' % (comment.creator, comment.created, comment.content)
                     for comment in comments
                 ]
             )
