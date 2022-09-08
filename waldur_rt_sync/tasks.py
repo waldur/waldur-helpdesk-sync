@@ -64,4 +64,4 @@ def pull_issues():
         except Exception as e:
             logger.exception(f"Unable to create issue {issue_id}. Message: {e}.")
         else:
-            logger.info(f"An issue {issue_id} has been created.")
+            logger.info(f'An issue {issue_id} has been mirror as {response.get("key")}.')
