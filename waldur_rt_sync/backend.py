@@ -28,6 +28,9 @@ class Backend:
     def get_issues(self):
         return list(self.manager.search(Queue=self.queue, Status=REQUEST_TRACKER_IMPORT_STATUS))
 
+    def get_all_issues(self):
+        return list(self.manager.search(Queue=self.queue))
+
     def add_comment(self, ticket_id, content):
         return self.manager.comment(ticket_id, content)
 

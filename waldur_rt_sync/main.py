@@ -17,6 +17,11 @@ if __name__ == "__main__":
         sync = Synchronization()
         logger.info('Looking for new tasks in RT...')
         sync.pull_issues()
+
         logger.info('Sync resolved tasks...')
         sync.sync_resolved()
+
+        logger.info('Sync comments...')
+        sync.pull_comments()
+
         sleep(float(60 * 5))
