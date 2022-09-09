@@ -8,7 +8,7 @@ REQUEST_TRACKER_URL - URL of request tracker
 REQUEST_TRACKER_TOKEN - token for access. see http://your_rt.domen/Prefs/AuthTokens.html
 REQUEST_TRACKER_QUEUE - queue for sync to waldur (only tickets with status REQUEST_TRACKER_IMPORT_STATUS will be syncronisated)
 REQUEST_TRACKER_IMPORT_STATUS - issue status to import from RT to Waldur. Default: 'new'
-REQUEST_TRACKER_IMPORTED_STATUS - issue status that will be used after import. Default: 'open'
+REQUEST_TRACKER_RESOLVED_STATUS - resolved issue status. Default: 'resolved'
 
 WALDUR_API_URL - URL of Waldur
 WALDUR_API_TOKEN - token for access. see http://your_waldur.domen/profile/manage/
