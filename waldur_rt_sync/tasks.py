@@ -6,6 +6,7 @@ from functools import lru_cache
 from waldur_client import WaldurClient
 
 from backend import Backend
+from clean_html import clean_html
 
 
 handler = logging.StreamHandler(sys.stdout)
@@ -114,15 +115,18 @@ class Synchronization:
                         # This comment has been created by RT
                         continue
 
-                    message = f"{WALDUR_COMMENT_MARKER}\n\n" \
+                    message = f"{WALDUR_COMMENT_MARKER}\n" \
                               f"{WALDUR_COMMENT_UUID_PREFIX}: {waldur_comment['uuid']}\n\n"
 
                     if [rt_comment for rt_comment in rt_comments if message in rt_comment.content]:
                         continue
 
-                    message += f"Description: {waldur_comment['description']}\n\n" \
-                               f"Author_name: {waldur_comment['author_name']}\n\n" \
-                               f"Created: {waldur_comment['created']}"
+                    message += '%s wrote on %s:\n%s\n\n' % (
+                        waldur_comment['author_name'],
+                        waldur_comment['created'],
+                        clean_html(waldur_comment['description'])
+                    )
+
                     self.rt_client.add_comment(rt_issue_id, message)
                 except Exception as e:
                     logger.exception(f"Unable to create comment in RT for issue {rt_issue_id}. Message: {e}.")
