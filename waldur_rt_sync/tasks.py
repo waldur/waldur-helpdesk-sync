@@ -96,7 +96,7 @@ class Synchronization:
             rt_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
             if rt_issue_id not in rt_issues_ids:
-                logger.info(f"Unable to pull issue comments from Waldur to RT. Issue {rt_issue_id} is not exists.")
+                logger.info(f"Unable to pull issue comments from Waldur to RT. Issue {rt_issue_id} does not exist.")
                 continue
 
             waldur_comments = self.waldur_client.list_support_comments(
@@ -136,7 +136,7 @@ class Synchronization:
             rt_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
             if rt_issue_id not in rt_issues_ids:
-                logger.info(f"Unable to pull issue comments from RT to Waldur. Issue {rt_issue_id} is not exists.")
+                logger.info(f"Unable to pull issue comments from RT to Waldur. Issue {rt_issue_id} does not exist.")
                 continue
 
             waldur_comments = self.waldur_client.list_support_comments(
