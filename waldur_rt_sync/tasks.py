@@ -103,7 +103,8 @@ class Synchronization:
             waldur_comments = self.waldur_client.list_support_comments(
                 filters={
                     'is_public': True,
-                    'issue_uuid': waldur_issue['uuid']
+                    'issue_uuid': waldur_issue['uuid'],
+                    'remote_id_is_set': False,
                 }
             )
 
@@ -111,10 +112,6 @@ class Synchronization:
 
             for waldur_comment in waldur_comments:
                 try:
-                    if waldur_comment['remote_id']:
-                        # This comment has been created by RT
-                        continue
-
                     message = f"{WALDUR_COMMENT_MARKER}\n" \
                               f"{WALDUR_COMMENT_UUID_PREFIX}: {waldur_comment['uuid']}\n\n"
 
@@ -146,7 +143,8 @@ class Synchronization:
             waldur_comments = self.waldur_client.list_support_comments(
                 filters={
                     'is_public': True,
-                    'issue_uuid': waldur_issue['uuid']
+                    'issue_uuid': waldur_issue['uuid'],
+                    'remote_id_is_set': True,
                 }
             )
 
