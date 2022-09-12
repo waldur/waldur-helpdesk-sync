@@ -10,7 +10,7 @@ REQUEST_TRACKER_TOKEN = os.environ["REQUEST_TRACKER_TOKEN"]
 REQUEST_TRACKER_QUEUE = os.environ["REQUEST_TRACKER_QUEUE"]
 REQUEST_TRACKER_IMPORT_STATUS = os.environ.get("REQUEST_TRACKER_IMPORT_STATUS", 'new')
 
-Comment = namedtuple('Comment', 'creator created content')
+Comment = namedtuple('Comment', 'id creator created content')
 
 
 class Backend:
@@ -28,6 +28,9 @@ class Backend:
     def get_issues(self):
         return list(self.manager.search(Queue=self.queue, Status=REQUEST_TRACKER_IMPORT_STATUS))
 
+    def get_all_issues(self):
+        return list(self.manager.search(Queue=self.queue))
+
     def add_comment(self, ticket_id, content):
         return self.manager.comment(ticket_id, content)
 
@@ -44,6 +47,7 @@ class Backend:
         ).json()
 
         for item in response['items']:
+            comment_id = item.get('id', '')
             content = item.get('Content', '')
             created = item.get('Created')
             creator = item.get('Creator', {}).get('id')
@@ -55,6 +59,7 @@ class Backend:
                 continue
 
             comment = Comment(
+                comment_id,
                 creator,
                 created,
                 clean_html(content)
