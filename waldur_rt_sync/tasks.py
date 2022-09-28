@@ -112,8 +112,7 @@ class Synchronization:
 
             for waldur_comment in waldur_comments:
                 try:
-                    message = f"{WALDUR_COMMENT_MARKER}\n" \
-                              f"{WALDUR_COMMENT_UUID_PREFIX}: {waldur_comment['uuid']}\n\n"
+                    message = f"{WALDUR_COMMENT_MARKER} / {waldur_comment['uuid']}\n\n"
 
                     if [rt_comment for rt_comment in rt_comments if message in rt_comment.content]:
                         continue
