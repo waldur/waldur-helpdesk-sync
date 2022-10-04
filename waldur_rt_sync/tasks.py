@@ -112,18 +112,20 @@ class Synchronization:
 
             for waldur_comment in waldur_comments:
                 try:
-                    message = f"{WALDUR_COMMENT_MARKER} / {waldur_comment['uuid']}\n\n"
+                    for rt_comment in rt_comments:
+                        if WALDUR_COMMENT_MARKER in rt_comment.content and \
+                                waldur_comment['uuid'] in rt_comment.content:
+                            break
+                    else:
+                        message = '%s / %s\n\n%s wrote on %s:\n%s\n\n' % (
+                            WALDUR_COMMENT_MARKER,
+                            waldur_comment['uuid'],
+                            waldur_comment['author_name'],
+                            waldur_comment['created'],
+                            clean_html(waldur_comment['description'])
+                        )
 
-                    if [rt_comment for rt_comment in rt_comments if message in rt_comment.content]:
-                        continue
-
-                    message += '%s wrote on %s:\n%s\n\n' % (
-                        waldur_comment['author_name'],
-                        waldur_comment['created'],
-                        clean_html(waldur_comment['description'])
-                    )
-
-                    self.rt_client.add_comment(rt_issue_id, message)
+                        self.rt_client.add_comment(rt_issue_id, message)
                 except Exception as e:
                     logger.exception(f"Unable to create comment in RT for issue {rt_issue_id}. Message: {e}.")
                 else:
