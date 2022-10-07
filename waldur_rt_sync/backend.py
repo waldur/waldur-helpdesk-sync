@@ -40,13 +40,13 @@ class Backend:
     def get_comments(self, ticket_id):
         comments = []
 
-        response = self.manager.session.request(
-                'get',
-                f'{self.manager.url}ticket/{ticket_id}/attachments',
-                params={'fields': 'Filename,ContentType,Content,Created,Creator'}
-        ).json()
+        response = self.manager._Rt__paged_request(
+            f'{self.manager.url}ticket/{ticket_id}/attachments',
+            per_page=100,
+            params={'fields': 'Filename,ContentType,Content,Created,Creator'}
+        )
 
-        for item in response['items']:
+        for item in response:
             comment_id = item.get('id', '')
             content = item.get('Content', '')
             created = item.get('Created')

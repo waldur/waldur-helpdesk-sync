@@ -90,9 +90,15 @@ class Synchronization:
                 else:
                     logger.info(f"An issue {issue_id} has been resolved.")
 
+    def is_waldur_comment_synced(self, waldur_comment, rt_comments):
+        for rt_comment in rt_comments:
+            if WALDUR_COMMENT_MARKER in rt_comment.content and \
+                    waldur_comment['uuid'] in rt_comment.content:
+                return True
+        return False
+
     def pull_comments_from_waldur_to_rt(self):
         rt_issues_ids = [issue.get('id') for issue in self.rt_client.get_all_issues()]
-
         for waldur_issue in self.get_waldur_issues():
             rt_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
@@ -112,24 +118,22 @@ class Synchronization:
 
             for waldur_comment in waldur_comments:
                 try:
-                    for rt_comment in rt_comments:
-                        if WALDUR_COMMENT_MARKER in rt_comment.content and \
-                                waldur_comment['uuid'] in rt_comment.content:
-                            break
-                    else:
-                        message = '%s / %s\n\n%s wrote on %s:\n%s\n\n' % (
-                            WALDUR_COMMENT_MARKER,
-                            waldur_comment['uuid'],
-                            waldur_comment['author_name'],
-                            waldur_comment['created'],
-                            clean_html(waldur_comment['description'])
-                        )
+                    if self.is_waldur_comment_synced(waldur_comment, rt_comments):
+                        continue
 
-                        self.rt_client.add_comment(rt_issue_id, message)
+                    message = '%s / %s\n\n%s wrote on %s:\n%s\n\n' % (
+                        WALDUR_COMMENT_MARKER,
+                        waldur_comment['uuid'],
+                        waldur_comment['author_name'],
+                        waldur_comment['created'],
+                        clean_html(waldur_comment['description'])
+                    )
+
+                    self.rt_client.add_comment(rt_issue_id, message)
+                    logger.info(f"A Waldur comment {waldur_comment['uuid']} in RT for issue {rt_issue_id} has been "
+                                f"created.")
                 except Exception as e:
                     logger.exception(f"Unable to create comment in RT for issue {rt_issue_id}. Message: {e}.")
-                else:
-                    logger.info(f"A comment in RT for issue {rt_issue_id} has been created.")
 
     def pull_comments_from_rt_to_waldur(self):
         rt_issues_ids = [issue.get('id') for issue in self.rt_client.get_all_issues()]
@@ -165,7 +169,7 @@ class Synchronization:
                               f"Author_name: {rt_comment.creator}\n\n" \
                               f"Created: {rt_comment.created}\n\n"
 
-                    self.waldur_client.create_support_comments(
+                    created_comment = self.waldur_client.create_support_comments(
                         waldur_issue['uuid'],
                         message,
                         rt_comment.id
@@ -173,4 +177,5 @@ class Synchronization:
                 except Exception as e:
                     logger.exception(f"Unable to create comment in Waldur for issue {rt_issue_id}. Message: {e}.")
                 else:
-                    logger.info(f"A comment in Waldur for issue {rt_issue_id} has been created.")
+                    logger.info(f"A comment {created_comment['uuid']} in Waldur for issue {rt_issue_id} has been "
+                                f"created.")
