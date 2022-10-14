@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: waldur-rt-sync
+  name: waldur-helpdesk-sync
 spec:
   selector:
     matchLabels:
-      app: waldur-rt-sync
+      app: waldur-helpdesk-sync
   template:
     metadata:
       labels:
-        app: waldur-rt-sync
+        app: waldur-helpdesk-sync
     spec:
       containers:
-        - name: waldur-rt-sync
-          image: registry.hpc.ut.ee/mirror/opennode/waldur-rt-sync:latest
+        - name: waldur-helpdesk-sync
+          image: registry.hpc.ut.ee/mirror/opennode/waldur-helpdesk-sync:latest
           imagePullPolicy: Always
           env:
             - name: REQUEST_TRACKER_URL
@@ -23,14 +23,14 @@ spec:
             - name: REQUEST_TRACKER_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: waldur-rt-sync-secret
+                  name: waldur-helpdesk-sync-secret
                   key: REQUEST_TRACKER_TOKEN
             - name: WALDUR_API_URL
               value: http://waldur.com/api
             - name: WALDUR_API_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: waldur-rt-sync-secret
+                  name: waldur-helpdesk-sync-secret
                   key: WALDUR_API_TOKEN
             - name: ISSUE_TYPE
               value: Incident
