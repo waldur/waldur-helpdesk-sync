@@ -136,7 +136,8 @@ class SyncBase:
             backend_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
             if backend_issue_id not in backend_issues_ids:
-                logger.info(f"Unable to pull issue comments from helpdesk to Waldur. Issue {backend_issue_id} does not exist.")
+                logger.info(f"Unable to pull issue comments from helpdesk to Waldur. "
+                            f"Issue {backend_issue_id} does not exist.")
                 continue
 
             waldur_comments = self.waldur_client.list_support_comments(
