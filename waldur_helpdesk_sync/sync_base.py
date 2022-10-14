@@ -97,7 +97,7 @@ class SyncBase:
             backend_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
             if backend_issue_id not in backend_issues_ids:
-                logger.info(f"Unable to pull issue comments from Waldur to help desk. Issue {backend_issue_id} does not exist.")
+                logger.info(f"Unable to pull issue comments from Waldur to helpdesk. Issue {backend_issue_id} does not exist.")
                 continue
 
             waldur_comments = self.waldur_client.list_support_comments(
@@ -124,10 +124,10 @@ class SyncBase:
                     )
 
                     self.backend_client.add_comment(backend_issue_id, message)
-                    logger.info(f"A Waldur comment {waldur_comment['uuid']} in help desk for issue {backend_issue_id} has been "
+                    logger.info(f"A Waldur comment {waldur_comment['uuid']} in helpdesk for issue {backend_issue_id} has been "
                                 f"created.")
                 except Exception as e:
-                    logger.exception(f"Unable to create comment in help desk for issue {backend_issue_id}. Message: {e}.")
+                    logger.exception(f"Unable to create comment in helpdesk for issue {backend_issue_id}. Message: {e}.")
 
     def pull_comments_from_backend_to_waldur(self):
         backend_issues_ids = [str(issue.get('id')) for issue in self.backend_client.get_all_issues()]
@@ -136,7 +136,8 @@ class SyncBase:
             backend_issue_id = waldur_issue['remote_id'].replace(ISSUE_ID_PREFIX + ':', '')
 
             if backend_issue_id not in backend_issues_ids:
-                logger.info(f"Unable to pull issue comments from help desk to Waldur. Issue {backend_issue_id} does not exist.")
+                logger.info(f"Unable to pull issue comments from helpdesk to Waldur. "
+                            f"Issue {backend_issue_id} does not exist.")
                 continue
 
             waldur_comments = self.waldur_client.list_support_comments(
