@@ -1,32 +1,28 @@
-import os
-from collections import namedtuple
-
 import rt.rest2
+
+from backend_base import *
 
 from clean_html import clean_html
 
-REQUEST_TRACKER_URL = os.environ["REQUEST_TRACKER_URL"]
-REQUEST_TRACKER_TOKEN = os.environ["REQUEST_TRACKER_TOKEN"]
-REQUEST_TRACKER_QUEUE = os.environ["REQUEST_TRACKER_QUEUE"]
-REQUEST_TRACKER_IMPORT_STATUS = os.environ.get("REQUEST_TRACKER_IMPORT_STATUS", 'new')
 
-Comment = namedtuple('Comment', 'id creator created content')
+REQUEST_TRACKER_QUEUE = os.environ.get('REQUEST_TRACKER_QUEUE')
 
 
 class Backend:
     def __init__(self):
-        if not REQUEST_TRACKER_URL.endswith('/'):
-            url = f'{REQUEST_TRACKER_URL}/REST/2.0/'
+        if not BACKEND_API_URL.endswith('/'):
+            url = f'{BACKEND_API_URL}/REST/2.0/'
         else:
-            url = f'{REQUEST_TRACKER_URL}REST/2.0/'
+            url = f'{BACKEND_API_URL}REST/2.0/'
 
         self.manager = rt.rest2.Rt(
-            url, token=REQUEST_TRACKER_TOKEN
+            url, token=BACKEND_API_TOKEN
         )
         self.queue = REQUEST_TRACKER_QUEUE
 
     def get_issues(self):
-        return list(self.manager.search(Queue=self.queue, Status=REQUEST_TRACKER_IMPORT_STATUS))
+        response = self.manager.search(Queue=self.queue, Status=BACKEND_IMPORT_STATUS)
+        return [Issue(k['id'], k['Subject']) for k in response]
 
     def get_all_issues(self):
         return list(self.manager.search(Queue=self.queue))
@@ -36,6 +32,9 @@ class Backend:
 
     def edit_issue(self, ticket_id, **kwargs):
         return self.manager.edit_ticket(ticket_id, **kwargs)
+
+    def resolve_issue(self, ticket_id):
+        return self.edit_issue(ticket_id, Status=BACKEND_RESOLVED_STATUS)
 
     def get_comments(self, ticket_id):
         comments = []
